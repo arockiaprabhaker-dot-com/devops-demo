@@ -8,10 +8,12 @@ pipeline {
             }
         }
 
-        stage('Deploy') {
+stage('Deploy') {
     steps {
-        sh 'minikube -p minikube update-context'
-        sh 'minikube kubectl -- apply -f k8s/deployment.yaml --validate=false --insecure-skip-tls-verify'
+        withEnv(["KUBECONFIG=/var/lib/jenkins/.kube/config"]) {
+            sh 'minikube -p minikube update-context'
+            sh 'minikube kubectl -- apply -f k8s/deployment.yaml --validate=false --insecure-skip-tls-verify'
+        }
     }
 }
     }
