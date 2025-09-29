@@ -11,7 +11,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 sh 'minikube -p minikube update-context'
-                sh 'minikube kubectl -- apply -f k8s/deployment.yaml'
+                sh minikube kubectl -- apply -f k8s/deployment.yaml --validate=false --insecure-skip-tls-verify
             }
         }
     }
