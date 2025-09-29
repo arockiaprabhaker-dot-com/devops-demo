@@ -11,9 +11,8 @@ pipeline {
         stage('Deploy') {
             steps {
                 sh 'minikube -p minikube update-context'
-                sh 'kubectl apply -f k8s/deployment.yaml --validate=false'
+                sh 'minikube kubectl -- apply -f k8s/deployment.yaml'
             }
         }
-    } 
-} 
-
+    }
+}
