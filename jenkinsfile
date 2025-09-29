@@ -7,15 +7,11 @@ pipeline {
                 sh 'docker build -t my-app:latest .'
             }
         }
-        stage('Deploy') {
-            steps {
-                echo 'Deploying on Minikube...'
-                sh '''
-                kubectl apply -f k8s/deployment.yaml
-                kubectl apply -f k8s/service.yaml
-                '''
-            }
-        }
+stage('Deploy') {
+    steps {
+        sh 'minikube -p minikube update-context'
+        sh 'kubectl apply -f k8s/deployment.yaml --validate=false'
     }
 }
+
 
