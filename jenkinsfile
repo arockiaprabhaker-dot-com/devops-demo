@@ -3,8 +3,10 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                echo 'Building Docker image...'
-                sh 'docker build -t my-app:latest .'
+                script {
+                    def dockerEnv = sh(returnStdout: true, script: 'minikube docker-env').trim()
+                    sh "${dockerEnv} && echo 'Building Docker image using Minikube daemon...' && docker build -t my-app:latest ."
+                }
             }
         }
 
