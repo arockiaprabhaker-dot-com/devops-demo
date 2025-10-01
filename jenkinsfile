@@ -1,11 +1,26 @@
 pipeline {
     agent any
+
+    environment {
+        DOCKER_HUB_USER = 'arockiaprabhaker'    
+        DOCKER_HUB_REPO = 'prabhaker'         
+        IMAGE_TAG = 'latest'
+    }
+
     stages {
-        stage('Build') {
+        stage('Build & Push Docker Image') {
             steps {
                 script {
-                    def dockerEnv = sh(returnStdout: true, script: 'minikube docker-env').trim()
-                    sh "${dockerEnv} && echo 'Building Docker image using Minikube daemon...' && docker build -t my-app:latest ."
+                    echo "Building Docker image: ${DOCKER_HUB_USER}/${DOCKER_HUB_REPO}:${IMAGE_TAG}"
+                    sh "docker build -t ${DOCKER_HUB_USER}/${DOCKER_HUB_REPO}:${IMAGE_TAG} ."
+
+                    withCredentials([string(credentialsId: 'DOCKER_HUB_PASSWORD', variable: 'DOCKER_HUB_PASSWORD')]) {
+                        sh "echo ${DOCKER_HUB_PASSWORD} | docker login -u ${DOCKER_HUB_USER} --password-stdin"
+                    }
+
+                    // Push the image to Docker Hub
+                    echo "Pushing Docker image to Docker Hub..."
+                    sh "docker push ${DOCKER_HUB_USER}/${DOCKER_HUB_REPO}:${IMAGE_TAG}"
                 }
             }
         }
